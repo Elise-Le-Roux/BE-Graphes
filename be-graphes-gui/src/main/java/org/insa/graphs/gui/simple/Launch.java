@@ -1,3 +1,5 @@
+// Elise Le Roux de Bretagne 25/03/2021
+
 package org.insa.graphs.gui.simple;
 
 import java.awt.BorderLayout;
