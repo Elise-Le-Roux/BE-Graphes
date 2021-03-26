@@ -198,11 +198,21 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
-        return false;
+        boolean valid = false;
+        if(this.isEmpty()) {
+        	valid = true;
+        }
+        else if(this.size() == 1) {
+        	valid = true;
+        }
+        else if(this.getOrigin().equals(this.arcs.get(0).getOrigin()) 
+        	&& this.arcs.get(0).getDestination().equals(this.arcs.get(1).getOrigin()) 
+        	&& this.arcs.get(1).getDestination().equals(this.arcs.get(2).getOrigin())) {
+        		valid = true;
+        	}
+        return valid;
     }
 
     /**
@@ -210,11 +220,13 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * @deprecated Need to be implemented.
      */
     public float getLength() {
-        // TODO:
-        return 0;
+    	float length = 0;
+        for(Arc value : this.arcs) {
+        	length += value.getLength();
+        }
+        return length;
     }
 
     /**
@@ -225,11 +237,13 @@ public class Path {
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
      * 
-     * @deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
-        // TODO:
-        return 0;
+    	double time = 0;
+        for(Arc value : this.arcs) {
+        	time += value.getTravelTime(speed);
+        }
+        return time;
     }
 
     /**
@@ -238,11 +252,13 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * @deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
-        // TODO:
-        return 0;
+    	double time = 0;
+        for(Arc value : this.arcs) {
+        	time += value.getMinimumTravelTime();
+        }
+        return time;
     }
 
 }
