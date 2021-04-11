@@ -56,35 +56,33 @@ public class Path {
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         Arc arc_min = null;
-        float length_min = 99999;
-        boolean valid = false;
-        Node dest;
+        float length_min;
+        boolean valid;
         
-        Iterator<Node> destination = nodes.iterator();
-        dest = destination.next();
+        if(nodes.size() == 0) { // empty path
+        	return new Path(graph);
+        }
         
-        for(Node origin : nodes) {
-        	List<Arc> successors = origin.getSuccessors();
-        	for(Arc arc: successors) {
-        		System.out.println("origine" + arc.getOrigin().getId() + "dest" + dest.getId());
-        		if(arc.getOrigin().equals(dest))
+        if(nodes.size() == 1) { // path with a single node
+        	return new Path(graph, nodes.get(0));
+        }
+        
+        for(int i = 0; i < nodes.size()-1; i++ ) { // path with multiple nodes
+        	length_min = 99999;
+        	valid = false;
+        	for(Arc successeur : nodes.get(i).getSuccessors()) { // go through all the arcs starting from the i-th node
+        		if(successeur.getDestination().equals(nodes.get(i+1))) { // if the arc as the right destination
         			valid = true;
-        			if(arc.getLength() < length_min) {
-        				length_min = arc.getLength();
-        				arc_min = arc;
+        			if(successeur.getLength() < length_min) { // get the minimum arc
+        				length_min = successeur.getLength();
+        				arc_min = successeur;
         			}
+        		}
         	}
         	if(!valid) {
         		throw new IllegalArgumentException("the list of nodes is not valid");
         	}
         	arcs.add(arc_min);
-        	System.out.println("**" + arc_min.getOrigin().getId() + arc_min.getDestination().getId() + "**");
-        	if(destination.hasNext()) {
-        		dest = destination.next();
-        	}
-        	else {
-        		break;
-        	}
         }
         return new Path(graph, arcs);
     }
