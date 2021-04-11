@@ -31,12 +31,39 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        Arc arc_min = null;
+        double time_min;
+        boolean valid;
+        
+        if(nodes.size() == 0) { // empty path
+        	return new Path(graph);
+        }
+        
+        if(nodes.size() == 1) { // path with a single node
+        	return new Path(graph, nodes.get(0));
+        }
+        
+        for(int i = 0; i < nodes.size()-1; i++ ) { // path with multiple nodes
+        	time_min = 99999;
+        	valid = false;
+        	for(Arc successeur : nodes.get(i).getSuccessors()) { // go through all the arcs starting from the i-th node
+        		if(successeur.getDestination().equals(nodes.get(i+1))) { // if the arc as the right destination
+        			valid = true;
+        			if(successeur.getMinimumTravelTime() < time_min) { // get the fastest arc
+        				time_min = successeur.getMinimumTravelTime();
+        				arc_min = successeur;
+        			}
+        		}
+        	}
+        	if(!valid) {
+        		throw new IllegalArgumentException("the list of nodes is not valid");
+        	}
+        	arcs.add(arc_min);
+        }
         return new Path(graph, arcs);
     }
 
@@ -73,7 +100,7 @@ public class Path {
         	for(Arc successeur : nodes.get(i).getSuccessors()) { // go through all the arcs starting from the i-th node
         		if(successeur.getDestination().equals(nodes.get(i+1))) { // if the arc as the right destination
         			valid = true;
-        			if(successeur.getLength() < length_min) { // get the minimum arc
+        			if(successeur.getLength() < length_min) { // get the shortest arc
         				length_min = successeur.getLength();
         				arc_min = successeur;
         			}
@@ -230,20 +257,25 @@ public class Path {
         boolean valid = false;
         int i;
         
-        if(this.isEmpty()) {
+        // empty path
+        if(this.isEmpty()) { 
         	valid = true;
         }
-        else if((this.size() == 1) && (this.arcs.isEmpty())) {
+        
+        // path with a single node
+        else if((this.size() == 1) && (this.arcs.isEmpty())) { 
         	valid = true;
         }
-        else if (this.getOrigin().equals(this.arcs.get(0).getOrigin())) {
+        
+        // path with multiple nodes
+        else if (this.getOrigin().equals(this.arcs.get(0).getOrigin())) { // check the origin
         	valid = true;
         	for(i = 0; i < this.size()-2; i++) {
-        		if(!(this.arcs.get(i).getDestination().equals(this.arcs.get(i+1).getOrigin()))) {
+        		if(!(this.arcs.get(i).getDestination().equals(this.arcs.get(i+1).getOrigin()))) { // check the arcs in between
         			valid = false;
         		}
         	}
-        	if(!(this.getDestination().equals(this.arcs.get(i).getDestination()))) {
+        	if(!(this.getDestination().equals(this.arcs.get(i).getDestination()))) { // check the destination
         		valid = false;
         	}
         }
