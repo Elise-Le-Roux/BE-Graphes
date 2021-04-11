@@ -2,6 +2,7 @@ package org.insa.graphs.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,13 +51,41 @@ public class Path {
      * 
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
-     * 
-     * @deprecated Need to be implemented.
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        Arc arc_min = null;
+        float length_min = 99999;
+        boolean valid = false;
+        Node dest;
+        
+        Iterator<Node> destination = nodes.iterator();
+        dest = destination.next();
+        
+        for(Node origin : nodes) {
+        	List<Arc> successors = origin.getSuccessors();
+        	for(Arc arc: successors) {
+        		System.out.println("origine" + arc.getOrigin().getId() + "dest" + dest.getId());
+        		if(arc.getOrigin().equals(dest))
+        			valid = true;
+        			if(arc.getLength() < length_min) {
+        				length_min = arc.getLength();
+        				arc_min = arc;
+        			}
+        	}
+        	if(!valid) {
+        		throw new IllegalArgumentException("the list of nodes is not valid");
+        	}
+        	arcs.add(arc_min);
+        	System.out.println("**" + arc_min.getOrigin().getId() + arc_min.getDestination().getId() + "**");
+        	if(destination.hasNext()) {
+        		dest = destination.next();
+        	}
+        	else {
+        		break;
+        	}
+        }
         return new Path(graph, arcs);
     }
 
@@ -201,17 +230,25 @@ public class Path {
      */
     public boolean isValid() {
         boolean valid = false;
+        int i;
+        
         if(this.isEmpty()) {
         	valid = true;
         }
-        else if(this.size() == 1) {
+        else if((this.size() == 1) && (this.arcs.isEmpty())) {
         	valid = true;
         }
-        else if(this.getOrigin().equals(this.arcs.get(0).getOrigin()) 
-        	&& this.arcs.get(0).getDestination().equals(this.arcs.get(1).getOrigin()) 
-        	&& this.arcs.get(1).getDestination().equals(this.arcs.get(2).getOrigin())) {
-        		valid = true;
+        else if (this.getOrigin().equals(this.arcs.get(0).getOrigin())) {
+        	valid = true;
+        	for(i = 0; i < this.size()-2; i++) {
+        		if(!(this.arcs.get(i).getDestination().equals(this.arcs.get(i+1).getOrigin()))) {
+        			valid = false;
+        		}
         	}
+        	if(!(this.getDestination().equals(this.arcs.get(i).getDestination()))) {
+        		valid = false;
+        	}
+        }
         return valid;
     }
 
