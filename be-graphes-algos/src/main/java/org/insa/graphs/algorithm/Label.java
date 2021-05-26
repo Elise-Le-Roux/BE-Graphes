@@ -4,23 +4,20 @@ import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Node;
 
 public class Label implements Comparable<Label> {
-	private int current_vertex;
+	private Node current_vertex;
 	private boolean mark;
 	private double cost;
 	private Arc father;
 	
-	public Label(int current_vertex) {
+	public Label(Node current_vertex) {
 		this.current_vertex = current_vertex;
 		this.mark = false;
 		this.cost = Double.POSITIVE_INFINITY;
 		this.father = null;
 	}
 	
-	public Label(int current_vertex, boolean mark, double cost, Arc father) {
-		this.current_vertex = current_vertex;
-		this.mark = mark;
-		this.cost = cost;
-		this.father = father;
+	public Node getCurrentVertex() {
+		return this.current_vertex;
 	}
 	
 	public boolean getMark() {
@@ -35,8 +32,8 @@ public class Label implements Comparable<Label> {
 		return this.father;
 	}
 	
-	public int getCurrentVertex() {
-		return this.current_vertex;
+	public double getTotalCost() {
+		return this.cost;
 	}
 	
 	public void setMark(boolean mark) {
@@ -53,6 +50,6 @@ public class Label implements Comparable<Label> {
 	
     @Override
     public int compareTo(Label other) {
-        return Double.compare(getCost(), other.getCost());
+        return Double.compare(getTotalCost(), other.getTotalCost());
     }
 }
